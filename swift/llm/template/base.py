@@ -123,7 +123,7 @@ class Template(ProcessorMixin):
         self.mode: Literal['pt', 'vllm', 'lmdeploy', 'sglang',  # infer
                            'train', 'rlhf', 'kto', 'gkd'] = 'pt'  # train
         self.task_type: Literal['causal_lm', 'seq_cls', 'embedding', 'prm', 'reranker',
-                                'generative_reranker'] = 'causal_lm'
+                                'generative_reranker', 'ewc', 'lwf'] = 'causal_lm'
         self.use_megatron = False
         self._handles = []
         self._deepspeed_initialize = None
@@ -487,7 +487,7 @@ class Template(ProcessorMixin):
 
         if isinstance(inputs, dict):
             inputs = deepcopy(inputs)
-            if self.task_type == 'causal_lm' and not self.is_training:
+            if self.task_type in {'causal_lm', 'ewc', 'lwf'} and not self.is_training:
                 InferRequest.remove_response(inputs['messages'])
             inputs = StdTemplateInputs.from_dict(inputs)
         elif isinstance(inputs, StdTemplateInputs):
@@ -495,7 +495,7 @@ class Template(ProcessorMixin):
         assert isinstance(inputs, StdTemplateInputs)
         self._preprocess_inputs(inputs)
 
-        if self.task_type == 'causal_lm':
+        if self.task_type in {'causal_lm', 'ewc', 'lwf'}:
             if self.mode in {'train', 'pt', 'vllm', 'lmdeploy', 'sglang'}:
                 encoded = self._encode_truncated(inputs)
             elif self.mode == 'rlhf':
@@ -1370,7 +1370,7 @@ class Template(ProcessorMixin):
         if self.packing and isinstance(batch[0], list):
             batch = sum(batch, start=[])
         num_samples = len(batch)
-        if self.task_type == 'causal_lm':
+        if self.task_type in {'causal_lm', 'ewc', 'lwf'}:
             if self.mode in {'pt', 'train'}:
                 res = self._data_collator(batch, padding_to=padding_to)
             elif self.mode == 'rlhf':

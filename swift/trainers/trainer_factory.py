@@ -24,6 +24,8 @@ class TrainerFactory:
         'ppo': 'swift.trainers.PPOTrainer',
         'grpo': 'swift.trainers.GRPOTrainer',
         'gkd': 'swift.trainers.GKDTrainer',
+        'ewc': 'swift.trainers.EWCTrainer',
+        'lwf': 'swift.trainers.LwFTrainer',
     }
 
     TRAINING_ARGS_MAPPING = {
@@ -40,6 +42,8 @@ class TrainerFactory:
         'ppo': 'swift.trainers.PPOConfig',
         'grpo': 'swift.trainers.GRPOConfig',
         'gkd': 'swift.trainers.GKDConfig',
+        'ewc': 'swift.trainers.Seq2SeqTrainingArguments',
+        'lwf': 'swift.trainers.Seq2SeqTrainingArguments',
     }
 
     @staticmethod

@@ -1,0 +1,14 @@
+CUDA_VISIBLE_DEVICES=0,1,2,3 NPROC_PER_NODE=4 swift sft \
+  --model /inspire/hdd/project/aiforquantum/zhengkaipeng-240108120123/test/models/Qwen3-4B-Instruct-2507 \
+  --train_type full \
+  --dataset /inspire/hdd/project/aiforquantum/zhengkaipeng-240108120123/test/codes/ContinualRL/data/distilled_data/medmcqa-train--distilled--medgemma-27b-text-it.json \
+  --num_train_epochs 2 \
+  --gradient_accumulation_steps 8 \
+  --torch_dtype bfloat16 \
+  --save_total_limit 4 \
+  --eval_steps 10 \
+  --save_steps 10 \
+  --output_dir output \
+  --gradient_checkpointing_kwargs '{"use_reentrant": false}' \
+  --deepspeed zero2 \
+  --save_only_model true \

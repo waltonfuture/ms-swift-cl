@@ -329,4 +329,47 @@ class TrainingArguments(SwiftArgumentsMixin, HfTrainingArguments):
 
 @dataclass
 class Seq2SeqTrainingArguments(SwiftArgumentsMixin, HfSeq2SeqTrainingArguments):
-    pass
+    # pass
+    ewc_lambda: float = field(
+        default=400.0, 
+        metadata={"help": "EWC regularization strength parameter. Controls how much to penalize changes to important parameters from previous tasks."}
+    )
+    
+    fisher_sample_size: int = field(
+        default=1000,
+        metadata={"help": "Number of samples to use for Fisher information matrix calculation. Higher values give more accurate importance estimates but take longer."}
+    )
+    
+    previous_task_checkpoint: Optional[str] = field(
+        default=None,
+        metadata={"help": "Path to previous task checkpoint for EWC. Should point to the checkpoint directory of the previous task."}
+    )
+    
+    fisher_save_path: Optional[str] = field(
+        default=None,
+        metadata={"help": "Path to save/load Fisher information matrix. If not specified, will be saved to output_dir."}
+    )
+    
+    task_id: int = field(
+        default=0,
+        metadata={"help": "Current task ID (0 for first task, 1 for second task, etc.). Used to track task sequence in continual learning."}
+    )
+    
+    use_ewc: bool = field(
+        default=False,
+        metadata={"help": "Whether to use EWC for continual learning. Set to True to enable EWC regularization."}
+    )
+    lwf_lambda: float = field(
+        default=1.0,
+        metadata={"help": "LwF regularization strength parameter. Controls the weight of knowledge distillation loss from previous tasks."}
+    )
+    
+    lwf_temperature: float = field(
+        default=2.0,
+        metadata={"help": "Temperature parameter for knowledge distillation in LwF. Higher values create softer probability distributions."}
+    )
+    
+    use_lwf: bool = field(
+        default=False,
+        metadata={"help": "Whether to use LwF for continual learning. Set to True to enable knowledge distillation from previous tasks."}
+    )

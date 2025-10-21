@@ -2,7 +2,7 @@
 import os
 from dataclasses import dataclass
 from typing import Literal, Optional
-
+from dataclasses import field
 from transformers import Seq2SeqTrainingArguments
 from transformers.utils.versions import require_version
 
@@ -24,6 +24,50 @@ class Seq2SeqTrainingOverrideArguments(TrainArgumentsMixin, Seq2SeqTrainingArgum
     eval_strategy: Optional[str] = None  # steps, epoch
     fp16: Optional[bool] = None
     bf16: Optional[bool] = None
+    # EWC (Elastic Weight Consolidation) parameters
+    ewc_lambda: float = field(
+        default=400.0, 
+        metadata={"help": "EWC regularization strength parameter"}
+    )
+    
+    fisher_sample_size: int = field(
+        default=1000,
+        metadata={"help": "Number of samples to use for Fisher information matrix calculation"}
+    )
+    
+    previous_task_checkpoint: Optional[str] = field(
+        default=None,
+        metadata={"help": "Path to previous task checkpoint for EWC"}
+    )
+    
+    fisher_save_path: Optional[str] = field(
+        default=None,
+        metadata={"help": "Path to save/load Fisher information matrix"}
+    )
+    
+    task_id: int = field(
+        default=0,
+        metadata={"help": "Current task ID (0 for first task)"}
+    )
+    
+    use_ewc: bool = field(
+        default=False,
+        metadata={"help": "Whether to use EWC for continual learning"}
+    )
+    lwf_lambda: float = field(
+        default=1.0,
+        metadata={"help": "LwF regularization strength parameter. Controls the weight of knowledge distillation loss from previous tasks."}
+    )
+    
+    lwf_temperature: float = field(
+        default=2.0,
+        metadata={"help": "Temperature parameter for knowledge distillation in LwF. Higher values create softer probability distributions."}
+    )
+    
+    use_lwf: bool = field(
+        default=False,
+        metadata={"help": "Whether to use LwF for continual learning. Set to True to enable knowledge distillation from previous tasks."}
+    )
 
     def _init_output_dir(self):
         if self.output_dir is None:
